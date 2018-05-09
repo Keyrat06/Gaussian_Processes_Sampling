@@ -50,7 +50,7 @@ def main():
 
     while True:
         plt.clf()
-        cm = plt.imshow(MAP[:, :, 0].T, vmin=0, vmax=1)
+        cm = plt.imshow(MAP[:, :, 0], vmin=0, vmax=1)
         plt.colorbar(cm)
         plt.pause(1)
 

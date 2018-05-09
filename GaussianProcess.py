@@ -9,9 +9,6 @@ N = util.N
 M = util.M
 K = 2
 
-#known_probabilities = [] #((p(C=1|x1,y1),p(C=2|x1,y1)),...,(p(C=1|xn,yn),p(C=2|xn,yn)))
-#known_locaations = [] #[[x1,y1],[x2,y2],[x3,y3],...,[xn,yn]]
-
 imageClassifier = pickle.load(open("Image_Classifier_Model.p", "rb"))
 
 def new_image(image_feature, x, y):
@@ -32,7 +29,7 @@ def new_image(image_feature, x, y):
 @util.timeit
 def get_image_map():
     if not os.path.exists("observations.p"):
-        return np.ones((N, M, K))/K
+        return np.ones((N, M, K))/float(K)
 
     while True:
         try:
@@ -40,8 +37,11 @@ def get_image_map():
             break
         except EOFError:
             time.sleep(0.001)
+
     locations = np.array(np.meshgrid(np.arange(N), np.arange(M))).T.reshape((-1, 2))
+
     regressor = gp.GaussianProcessRegressor(gp.kernels.RBF(6.0) + gp.kernels.WhiteKernel(.01), optimizer=None)
+
     known_probabilities = (np.array(known_probabilities) - 0.5)*4
     regressor = regressor.fit(known_locations, known_probabilities)
     predictions = regressor.predict(locations).reshape((N, M, K))
