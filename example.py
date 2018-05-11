@@ -16,7 +16,7 @@ K = 2
 MAP = (np.ones((N, M, K))/K)
 np.random.seed(0)
 
-def Image_Classification_Thread(n = float('inf')):
+def Image_Classification_Thread(n = float('inf'), t=0.01):
     print("YAY Image Classification Has Started!")
     GaussianProcess.setup()
     imageClassifier = pickle.load(open("Image_Classifier_Model.p", "rb"))
@@ -29,7 +29,7 @@ def Image_Classification_Thread(n = float('inf')):
                            sample_location[1]*100:sample_location[1]*100+100]
 
         image_feature = FEATURE_EXTRACTOR(image_sample)
-        # time.sleep(0.01)
+        time.sleep(t)
         P = imageClassifier.predict_proba(np.array([image_feature]))[0]
         GaussianProcess.new_image(P, sample_location[0], sample_location[1])
         i += 1
@@ -67,7 +67,7 @@ def experament(a_options=np.linspace(0,1,11), b_options=range(1,21), n=100):
     :return: None
     """
     np.random.seed(0)
-    Image_Classification_Thread(n)
+    Image_Classification_Thread(n, t=0)
     data = np.zeros((len(a_options), len(b_options)))
     min_NLL = float('inf')
     optimal_params = (-1, -1)
