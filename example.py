@@ -13,10 +13,11 @@ N = util.N
 M = util.M
 K = 2
 
-MAP = (np.ones((N, M, K))/K)
+# MAP = np.ones(N,M,K)/float(K)
+MAP = lambda x, y: np.ones(K)/float(K)
 np.random.seed(0)
 
-def Image_Classification_Thread(n = float('inf'), t=0.01):
+def Image_Classification_Thread(n = float('inf'), t=0.1):
     print("YAY Image Classification Has Started!")
     GaussianProcess.setup()
     imageClassifier = pickle.load(open("Image_Classifier_Model.p", "rb"))
@@ -41,7 +42,8 @@ def Adaptive_Sampling_Thread():
     while True:
         time.sleep(1)
         global MAP
-        MAP = GaussianProcess.get_image_map()
+        # MAP = GaussianProcess.get_image_map()
+        MAP = GaussianProcess.GPRegressor()
 
 
 def main():
@@ -51,11 +53,29 @@ def main():
     sampling.start()
 
     while True:
-        print(util.get_NLL(MAP))
-        plt.clf()
-        cm = plt.imshow(MAP[:, :, 1], vmin=0, vmax=1)
-        plt.colorbar(cm)
+        # print(util.get_NLL(MAP))
+        # plt.clf()
+        # cm = plt.imshow(MAP[:, :, 1], vmin=0, vmax=1)
+        # plt.colorbar(cm)
+        # plt.pause(1)
+        xs = []
+        ys = []
+        ps = []
+        for _ in range(10):
+            for _ in range(10):
+                plt.clf()
+                x = np.random.random() * N
+                y = np.random.random() * M
+                p = MAP(x,y)
+                xs.append(x)
+                ys.append(y)
+                ps.append(p[0])
+        # plt.scatter(x, y, p)
+        print(ps)
+        plt.scatter(xs, ys, c=ps, cmap='RdYlGn_r', alpha=0.75)
         plt.pause(1)
+
+
 
 
 def experament(a_options=np.linspace(0,1,11), b_options=range(1,21), n=100):
@@ -87,7 +107,7 @@ def experament(a_options=np.linspace(0,1,11), b_options=range(1,21), n=100):
     plt.ylabel("a")
     plt.show("hold")
 
-experament()
+# experament()
 
 if __name__ == "__main__":
     main()

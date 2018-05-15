@@ -35,6 +35,35 @@ def new_image(p, x, y):
     pickle.dump((known_probabilities, known_locations), open("observations.p", "wb"))
 
 
+class GPRegressor:
+    def __init__(self, a=0.5, b=8):
+        self.a = a
+        self.b = b
+        if not os.path.exists("observations.p"):
+            self.regressor = None
+
+        else:
+            while True:
+                try:
+                    known_probabilities, known_locations = pickle.load(open("observations.p", "rb"))
+                    break
+
+                except EOFError:
+                    time.sleep(0.001)
+
+            regressor = gp.GaussianProcessRegressor(gp.kernels.RBF(6.0) + gp.kernels.WhiteKernel(.01), optimizer=None)
+            latent_values = (np.array(known_probabilities) - self.a)*self.b
+            self.regressor = regressor.fit(known_locations, latent_values)
+
+    def get_probability(self, x, y):
+        if self.regressor is None:
+            return np.ones(K)/K
+        else:
+            return util.softmax(self.regressor.predict(np.array([[x, y]])), axis=1)
+
+    def __call__(self, x, y):
+        return self.get_probability(x, y)[0]
+
 def get_image_map(a=0.5, b=8):
     """
     Gets probability map
