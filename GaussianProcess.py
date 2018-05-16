@@ -4,6 +4,7 @@ import pickle
 import numpy as np
 import util
 import time
+import matplotlib.pyplot as plt
 
 # THESE ARE THE WORLD PARAMETERS
 N = util.N
@@ -36,24 +37,25 @@ def new_image(p, x, y):
 
 
 class GPRegressor:
-    def __init__(self, a=0.5, b=8):
+    def __init__(self, a=0.5, b=2):
         self.a = a
         self.b = b
         if not os.path.exists("observations.p"):
             self.regressor = None
+            self.known_probabilities = []
 
         else:
             while True:
                 try:
-                    known_probabilities, known_locations = pickle.load(open("observations.p", "rb"))
+                    self.known_probabilities, self.known_locations = pickle.load(open("observations.p", "rb"))
                     break
 
                 except EOFError:
                     time.sleep(0.001)
 
-            regressor = gp.GaussianProcessRegressor(gp.kernels.RBF(6.0) + gp.kernels.WhiteKernel(.01), optimizer=None)
-            latent_values = (np.array(known_probabilities) - self.a)*self.b
-            self.regressor = regressor.fit(known_locations, latent_values)
+            regressor = gp.GaussianProcessRegressor(gp.kernels.RBF([2.0, 2.0]) + gp.kernels.WhiteKernel(.01), optimizer=None)
+            latent_values = (np.array(self.known_probabilities) - self.a)*self.b
+            self.regressor = regressor.fit(self.known_locations, latent_values)
 
     def get_probability(self, x, y):
         if self.regressor is None:
@@ -63,6 +65,28 @@ class GPRegressor:
 
     def __call__(self, x, y):
         return self.get_probability(x, y)[0]
+
+    def visualize(self, c=0, minx=0, miny=0, maxx=util.N, maxy=util.M, granularity=100):
+        xi = np.linspace(minx, maxx, granularity)
+        yi = np.linspace(miny, maxy, granularity)
+        locations =  np.array(np.meshgrid(xi, yi)).T.reshape((-1, 2))
+        DEM = util.softmax(self.regressor.predict(locations), axis=1)[:,c]
+        DEM = DEM.reshape((granularity,granularity))
+        levels = np.arange(0, 1, 0.1)
+        plt.contour(DEM, levels, linewidths=0.2,colors='k')
+        plt.imshow(DEM,cmap ='RdYlGn_r',origin='lower', vmin=0, vmax=1)
+        plt.colorbar()
+        xs = np.array(self.known_locations)[:,0]
+        ys = np.array(self.known_locations)[:,1]
+        xArrayNormalized = xs/(maxx-minx)
+        xArrayNormalized -= minx
+        yArrayNormalized = ys/(maxy-miny)
+        yArrayNormalized -= miny
+        plt.xticks([])
+        plt.yticks([])
+        plt.title("Probability Map of Class {}".format(c))
+        plt.scatter(granularity*xArrayNormalized, granularity*yArrayNormalized, color='k', alpha=0.25)
+        plt.show()
 
 def get_image_map(a=0.5, b=8):
     """

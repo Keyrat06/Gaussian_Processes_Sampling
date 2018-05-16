@@ -6,16 +6,16 @@ import numpy as np
 import cv2
 import GaussianProcess
 import util
-
+from scipy import interpolate
 plt.ion()
 
 N = util.N
 M = util.M
 K = 2
 
-# MAP = np.ones(N,M,K)/float(K)
+# MAP = np.ones((N,M,K))/float(K)
 MAP = lambda x, y: np.ones(K)/float(K)
-np.random.seed(0)
+# np.random.seed(0)
 
 def Image_Classification_Thread(n = float('inf'), t=0.1):
     print("YAY Image Classification Has Started!")
@@ -40,7 +40,7 @@ def Image_Classification_Thread(n = float('inf'), t=0.1):
 def Adaptive_Sampling_Thread():
     print("YAY Adaptive Sampling Has Started!")
     while True:
-        time.sleep(1)
+        time.sleep(0.1)
         global MAP
         # MAP = GaussianProcess.get_image_map()
         MAP = GaussianProcess.GPRegressor()
@@ -53,27 +53,44 @@ def main():
     sampling.start()
 
     while True:
+        plt.pause(1)
+        plt.clf()
+        MAP.visualize(0)
         # print(util.get_NLL(MAP))
         # plt.clf()
         # cm = plt.imshow(MAP[:, :, 1], vmin=0, vmax=1)
         # plt.colorbar(cm)
         # plt.pause(1)
-        xs = []
-        ys = []
-        ps = []
-        for _ in range(10):
-            for _ in range(10):
-                plt.clf()
-                x = np.random.random() * N
-                y = np.random.random() * M
-                p = MAP(x,y)
-                xs.append(x)
-                ys.append(y)
-                ps.append(p[0])
-        # plt.scatter(x, y, p)
-        print(ps)
-        plt.scatter(xs, ys, c=ps, cmap='RdYlGn_r', alpha=0.75)
-        plt.pause(1)
+        # xs = []
+        # ys = []
+        # ps = []
+        # for _ in range(1000):
+        #     plt.clf()
+        #     x = np.random.random() * N
+        #     y = np.random.random() * M
+        #     p = MAP(x,y)
+        #     xs.append(x)
+        #     ys.append(y)
+        #     ps.append(p[0])
+        # numIndexes = 500
+        # xi = np.linspace(np.min(xs), np.max(xs), numIndexes)
+        # yi = np.linspace(np.min(ys), np.max(ys), numIndexes)
+        # XI, YI = np.meshgrid(xi, yi)
+        # points = np.vstack((xs, ys)).T
+        # values = np.array(ps)
+        # print(points.shape)
+        # print(values.shape)
+        # DEM = interpolate.griddata(points, values, (XI, YI), method='linear', fill_value=0.02)
+        # print(DEM)
+        # levels = np.arange(np.min(DEM), np.max(DEM), 0.1)
+        # plt.contour(DEM, levels, linewidths=0.2,colors='k')
+        # plt.imshow(DEM,cmap ='RdYlGn_r',origin='lower', vmin=0, vmax=1)
+        # plt.colorbar()
+        # xArrayNormalized = xs/(np.max(xs)-np.min(xs))
+        # xArrayNormalized -= np.min(xArrayNormalized)
+        # yArrayNormalized = ys/(np.max(ys)-np.min(ys))
+        # yArrayNormalized -= np.min(yArrayNormalized)
+        # plt.scatter(numIndexes*xArrayNormalized, numIndexes*yArrayNormalized, color='k', alpha=0.25)
 
 
 
@@ -100,9 +117,11 @@ def experament(a_options=np.linspace(0,1,11), b_options=range(1,21), n=100):
                 optimal_params = (a, b)
                 min_NLL = nll
     print("optimal a = {}, optimal b = {}".format(*optimal_params))
-    plt.imshow(data)
+    cm = plt.imshow(data)
+    plt.colorbar(cm)
     plt.xticks(range(20), b_options)
     plt.yticks(range(10), a_options)
+    plt.title("Negative Log Loss for values of a and b")
     plt.xlabel("b")
     plt.ylabel("a")
     plt.show("hold")
