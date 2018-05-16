@@ -56,44 +56,6 @@ def main():
         plt.pause(1)
         plt.clf()
         MAP.visualize(0)
-        # print(util.get_NLL(MAP))
-        # plt.clf()
-        # cm = plt.imshow(MAP[:, :, 1], vmin=0, vmax=1)
-        # plt.colorbar(cm)
-        # plt.pause(1)
-        # xs = []
-        # ys = []
-        # ps = []
-        # for _ in range(1000):
-        #     plt.clf()
-        #     x = np.random.random() * N
-        #     y = np.random.random() * M
-        #     p = MAP(x,y)
-        #     xs.append(x)
-        #     ys.append(y)
-        #     ps.append(p[0])
-        # numIndexes = 500
-        # xi = np.linspace(np.min(xs), np.max(xs), numIndexes)
-        # yi = np.linspace(np.min(ys), np.max(ys), numIndexes)
-        # XI, YI = np.meshgrid(xi, yi)
-        # points = np.vstack((xs, ys)).T
-        # values = np.array(ps)
-        # print(points.shape)
-        # print(values.shape)
-        # DEM = interpolate.griddata(points, values, (XI, YI), method='linear', fill_value=0.02)
-        # print(DEM)
-        # levels = np.arange(np.min(DEM), np.max(DEM), 0.1)
-        # plt.contour(DEM, levels, linewidths=0.2,colors='k')
-        # plt.imshow(DEM,cmap ='RdYlGn_r',origin='lower', vmin=0, vmax=1)
-        # plt.colorbar()
-        # xArrayNormalized = xs/(np.max(xs)-np.min(xs))
-        # xArrayNormalized -= np.min(xArrayNormalized)
-        # yArrayNormalized = ys/(np.max(ys)-np.min(ys))
-        # yArrayNormalized -= np.min(yArrayNormalized)
-        # plt.scatter(numIndexes*xArrayNormalized, numIndexes*yArrayNormalized, color='k', alpha=0.25)
-
-
-
 
 def experament(a_options=np.linspace(0,1,11), b_options=range(1,21), n=100):
     """
