@@ -51,11 +51,12 @@ def main():
     sampling = threading.Thread(name='adaptive_sample', target=Adaptive_Sampling_Thread)
     image.start()
     sampling.start()
-
+    i = 0
     while True:
         plt.pause(1)
         plt.clf()
-        MAP.visualize(0)
+        MAP.visualize(0, file_path="images/yay{}.png".format(i))
+        i += 1
 
 def experament(a_options=np.linspace(0,1,11), b_options=range(1,21), n=100):
     """

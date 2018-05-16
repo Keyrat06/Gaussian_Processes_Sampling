@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+images/*
 
 Map_Evolution.png
 Map_Evolution.psd

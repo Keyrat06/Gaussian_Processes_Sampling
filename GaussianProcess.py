@@ -66,7 +66,7 @@ class GPRegressor:
     def __call__(self, x, y):
         return self.get_probability(x, y)[0]
 
-    def visualize(self, c=0, minx=0, miny=0, maxx=util.N, maxy=util.M, granularity=100):
+    def visualize(self, c=0, minx=0, miny=0, maxx=util.N, maxy=util.M, granularity=100, file_path=None):
         xi = np.linspace(minx, maxx, granularity)
         yi = np.linspace(miny, maxy, granularity)
         locations =  np.array(np.meshgrid(xi, yi)).T.reshape((-1, 2))
@@ -86,7 +86,10 @@ class GPRegressor:
         plt.yticks([])
         plt.title("Probability Map of Class {}".format(c))
         plt.scatter(granularity*xArrayNormalized, granularity*yArrayNormalized, color='k', alpha=0.25)
-        plt.show()
+        if file_path:
+            plt.savefig(file_path)
+        else:
+            plt.show()
 
 def get_image_map(a=0.5, b=8):
     """
