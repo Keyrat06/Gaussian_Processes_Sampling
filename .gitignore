@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+Map_Evolution.png
+Map_Evolution.psd
 
 .idea
 GP_simple.iml
