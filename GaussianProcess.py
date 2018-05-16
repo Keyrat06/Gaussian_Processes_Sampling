@@ -53,7 +53,7 @@ class GPRegressor:
                 except EOFError:
                     time.sleep(0.001)
 
-            regressor = gp.GaussianProcessRegressor(gp.kernels.RBF([2.0, 2.0]) + gp.kernels.WhiteKernel(.01), optimizer=None)
+            regressor = gp.GaussianProcessRegressor(gp.kernels.RBF([0.3, 0.3]) + gp.kernels.WhiteKernel(.01), optimizer=None)
             latent_values = (np.array(self.known_probabilities) - self.a)*self.b
             self.regressor = regressor.fit(self.known_locations, latent_values)
 
@@ -85,7 +85,7 @@ class GPRegressor:
         plt.xticks([])
         plt.yticks([])
         plt.title("Probability Map of Class {}".format(c))
-        plt.scatter(granularity*xArrayNormalized, granularity*yArrayNormalized, color='k', alpha=0.25)
+        plt.scatter(granularity*yArrayNormalized, granularity*xArrayNormalized, color='k', alpha=0.25)
         if file_path:
             plt.savefig(file_path)
         else:
